@@ -1,0 +1,151 @@
+﻿@model IEnumerable<OffWork.Models.AbsenceDetail>
+@{
+    ViewBag.Title = "Employee Absence detail list";
+}
+<p>
+    @Html.ActionLink("Apply Leave", "Create")
+</p>
+<h2>Employee Absence detailed list</h2>
+
+@using (Html.BeginForm())
+{
+    <Panel class="panel panel-info">
+    <div class="panel-heading">Filter Absence List</div>
+    <div class="panel-body">
+        <table class="table" style="width:25%">           
+            <tr>
+                <td>Employee:</td>
+                <td>@Html.DropDownList("EmployeeId", (IEnumerable<SelectListItem>)ViewBag.EmployeeList, "Select Employee")</td>
+            </tr>
+            <tr>
+                <td>Start Date:</td>
+                <td>@Html.TextBox("StartDate", null, "{0:MM.dd/yyyy}", new { @type = "date" })</td>
+            </tr>
+            <tr>
+                <td>End Date:</td>
+                <td>@Html.TextBox("EndDate", null, "{0:MM/dd/yyyy}", new { @type = "date" })</td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Search" class="btn btn-primary" /></td>
+                <td><a href='@Url.Action("Index", "AbsenceDetails")' class="btn btn-default">Reset</a></td>
+            </tr>
+        </table>
+    </div>
+</Panel>
+}
+<br/>
+
+<table class="table">
+    <tr>
+        <th>
+            Full Name
+        </th>
+        <th>
+            #Total Absent days
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.FilteredEmployeeList)
+    {
+        var absentDetails = Model.Where(x => x.EmployeeId == Convert.ToInt32(item.Value));
+        int absenceCount=0;
+        foreach(var absentDetail in absentDetails)
+        {
+            if (absentDetail.IsApproved)
+            {
+                absenceCount += (int)(absentDetail.EndDateOfAbsence - absentDetail.StartDateOfAbsence).TotalDays;
+            }
+        }
+        string rowId = "row-" + item.Value;
+        string rowIdRef = "#row-" + item.Value;
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Text)
+            </td>
+            <td>
+                @absenceCount
+            </td>
+            <td> @if (absenceCount > 0) {<a href=@rowIdRef data-toggle="collapse">View</a>}</td>
+        </tr>
+        if (absenceCount > 0)
+        {
+        <tr id=@rowId class="collapse">
+            <td colspan="2">
+                <table class="table">
+                    <tr>
+                        <th>
+                            Absence type
+                        </th>
+                        
+                        <th>
+                            Start Date
+                        </th>
+                        <th>
+                            End Date
+                        </th>
+                        <th>
+                            Start Date(Is full day?)
+                        </th>
+                        <th>
+                            End date(Is full day?)
+                        </th>
+                        <th>
+                            Is Approved?
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item1 in Model.Where(x => x.EmployeeId == Convert.ToInt32(item.Value)))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.AbsenceType.AbsenceTypeValue)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.StartDateOfAbsence)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.EndDateOfAbsence)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.StartDateFullDay)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.EndDateFullDay)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item1.IsApproved)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item1.AbsenceDetailId }) |
+                                @Html.ActionLink("Details", "Details", new { id = item1.AbsenceDetailId }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item1.AbsenceDetailId })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+        }
+    }
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/jquery.signalR-2.4.1.min.js")
+    @Scripts.Render("~/signalr/hubs")
+
+    <script>
+        var connection = $.hubConnection();
+        var hub = connection.createHubProxy("MyHub1");
+        hub.on("SendUpdatedAbsenceDetail", function (absenceDetail) {
+            window.alert('You received an update on Employee absence details. Refreshing the page to get latest data. ');
+            location.reload();
+        });
+
+        connection.start();
+    </script>
+}
+
+

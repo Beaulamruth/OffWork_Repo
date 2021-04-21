@@ -1,0 +1,100 @@
+﻿@model OffWork.Models.AbsenceDetail
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Absence Detail</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.AbsenceDetailId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EmployeeId, "Employee", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("EmployeeId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EmployeeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AbsenceTypeId, "Absence Type", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("AbsenceTypeId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AbsenceTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDateOfAbsence, "Absent From", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDateOfAbsence, new { @type = "date" })
+                @Html.ValidationMessageFor(model => model.StartDateOfAbsence, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.StartDateOfAbsence, "Absent From", htmlAttributes: new { @class = "control -label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDateOfAbsence, new { @type = "date" })
+                @Html.ValidationMessageFor(model => model.StartDateOfAbsence, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndDateOfAbsence, "Absent To", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EndDateOfAbsence, new { @type = "date" })
+                @Html.ValidationMessageFor(model => model.EndDateOfAbsence, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDateFullDay, "Start Date Full Day", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.StartDateFullDay)
+                    @Html.ValidationMessageFor(model => model.StartDateFullDay, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndDateFullDay, "End Date Full Day", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.EndDateFullDay)
+                    @Html.ValidationMessageFor(model => model.EndDateFullDay, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsApproved, "IsApproved", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsApproved)
+                    @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
